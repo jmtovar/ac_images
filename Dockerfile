@@ -8,6 +8,7 @@ RUN apt-get update -qq && apt-get install -y -qq \
     rm -rf /var/lib/apt/lists/*
 
 # Install Claude Code native binary
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -fsSL https://claude.ai/install.sh | bash && \
     cp /root/.local/bin/claude /usr/local/bin/claude
 
