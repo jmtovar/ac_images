@@ -33,3 +33,25 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+  test:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build image for testing
+        uses: docker/build-push-action@v7
+        with:
+          load: true
+          push: false
+          tags: test-image:ci
+
+      - name: Smoke test — claude --help
+        run: docker run --rm test-image:ci --help
+
+      - name: Smoke test — claude --version
+        run: docker run --rm test-image:ci --version
