@@ -1,10 +1,11 @@
 # Last modified by: claude-sonnet-4-6
-# Last modified:    2026-04-05
+# Last modified:    2026-04-06
+---
 name: Publish Docker image
 
-on:
+"on":
   push:
-    branches: [main]
+    tags: ["*"]
   pull_request:
     branches: [main]
 
@@ -15,8 +16,23 @@ jobs:
       contents: read
       packages: write
 
+    strategy:
+      matrix:
+        include:
+          # Default image — apt Python 3, Debian base
+          - image_suffix: ""
+            dockerfile: Dockerfile
+            build_args: ""
+          # Deadsnakes variants — add/remove entries here
+          - image_suffix: "_py3.12"
+            dockerfile: Dockerfile.deadsnakes
+            build_args: "PYTHON_MINOR=3.12"
+          - image_suffix: "_py3.13"
+            dockerfile: Dockerfile.deadsnakes
+            build_args: "PYTHON_MINOR=3.13"
+
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Log in to GHCR
         if: github.event_name != 'pull_request'
@@ -29,10 +45,12 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
+          file: ${{ matrix.dockerfile }}
+          build-args: ${{ matrix.build_args }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/ac_images${{ matrix.image_suffix }}:latest
+            ghcr.io/${{ github.repository_owner }}/ac_images${{ matrix.image_suffix }}:${{ github.ref_name }}
 
   test:
     runs-on: ubuntu-latest
@@ -41,7 +59,7 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Build image for testing
         uses: docker/build-push-action@v7
