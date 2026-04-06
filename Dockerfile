@@ -10,8 +10,15 @@ RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
   git \
   python3 \
   python3-pip \
-  python3-venv && \
+  python3-venv \
+  yamllint && \
 rm -rf /var/lib/apt/lists/*
+
+# Install hadolint
+RUN curl -fsSL \
+    https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 \
+    -o /usr/local/bin/hadolint \
+    && chmod +x /usr/local/bin/hadolint
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
