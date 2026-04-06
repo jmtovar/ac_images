@@ -1,0 +1,35 @@
+# Last modified by: claude-sonnet-4-6
+# Last modified:    2026-04-06
+---
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: sudo apt-get install -y yamllint
+
+      - name: Install hadolint
+        run: |
+          curl -fsSL \
+            https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 \
+            -o /usr/local/bin/hadolint
+          chmod +x /usr/local/bin/hadolint
+
+      - name: Lint YAML
+        run: scripts/lint-yaml.sh
+
+      - name: Lint Dockerfiles
+        run: scripts/lint-dockerfile.sh
