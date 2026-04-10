@@ -21,9 +21,6 @@ jobs:
             dockerfile: Dockerfile
             build_args: ""
           # Deadsnakes variants — add/remove entries here
-          - image_suffix: "_py3.12"
-            dockerfile: Dockerfile.deadsnakes
-            build_args: "PYTHON_MINOR=3.12"
           - image_suffix: "_py3.13"
             dockerfile: Dockerfile.deadsnakes
             build_args: "PYTHON_MINOR=3.13"
@@ -75,9 +72,6 @@ jobs:
             dockerfile: Dockerfile
             build_args: ""
           # Deadsnakes variants — add/remove entries here
-          - image_suffix: "_py3.12"
-            dockerfile: Dockerfile.deadsnakes
-            build_args: "PYTHON_MINOR=3.12"
           - image_suffix: "_py3.13"
             dockerfile: Dockerfile.deadsnakes
             build_args: "PYTHON_MINOR=3.13"
